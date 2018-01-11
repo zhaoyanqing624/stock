@@ -16,8 +16,8 @@ public class StockDataPersistence {
 	private String DATE;
 	@TableField(columnName="OPEN")
 	private String OPEN;
-	@TableField(columnName="HIGN")
-	private String HIGN;
+	@TableField(columnName="HIGH")
+	private String HIGH;
 	@TableField(columnName="LOW")
 	private String LOW;
 	@TableField(columnName="CLOSE")
@@ -50,11 +50,11 @@ public class StockDataPersistence {
 	public void setOPEN(String oPEN) {
 		OPEN = oPEN;
 	}
-	public String getHIGN() {
-		return HIGN;
+	public String getHIGH() {
+		return HIGH;
 	}
-	public void setHIGN(String hIGN) {
-		HIGN = hIGN;
+	public void setHIGH(String hIGH) {
+		HIGH = hIGH;
 	}
 	public String getLOW() {
 		return LOW;

@@ -13,8 +13,32 @@ import com.stock.database.model.StockMarketPersistence;
 
 public class ReadCSV {
 	public static void main(String[] args) {
-		readCSV_NASDAQ();
+		String[] str = {"2017-12-28 09:30:00","1","1","1","1","1","1"};
+		readCSV_NasdaqStock("AAAP", str);
 	}
+	public static void readCSV_NasdaqStock(String filename,String[] str) {
+		filename.replaceAll(" ", "");
+		String filePath = "E:\\data\\nasdaq\\"+filename+".csv";
+        try {
+            // 创建CSV读对象
+            CsvReader csvReader = new CsvReader(filePath);
+            // 读表头
+            csvReader.readHeaders();
+            boolean isCurrent = false;
+            while (csvReader.readRecord()){
+            	if(csvReader.get("Date").equals(str[0])) {
+            		isCurrent = true;
+            	}
+            }
+            if(!isCurrent) {
+            	WriteCSV writeCSV = new WriteCSV();
+            	writeCSV.writeCSV_Nasdaq(filename, str);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
 	public static void readCSV_NASDAQ() {
 		String filePath = "E:/companyList_nasdaq.csv";
 		List<StockMarketPersistence> stockMarketPersistences = StockMarketHelper.getStockMarketList("NASDAQ");

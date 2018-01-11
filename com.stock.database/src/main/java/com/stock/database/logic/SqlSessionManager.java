@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
+import com.stock.database.mapper.ErrorPersistenceMapper;
 import com.stock.database.mapper.StockDataPersistenceMapper;
 import com.stock.database.mapper.StockInfoPersistenceMapper;
 import com.stock.database.mapper.StockMarketPersistenceMapper;
@@ -41,6 +42,7 @@ public class SqlSessionManager {
 			configuration.addMapper(StockMarketPersistenceMapper.class);
 			configuration.addMapper(StockInfoPersistenceMapper.class);
 			configuration.addMapper(StockDataPersistenceMapper.class);
+			configuration.addMapper(ErrorPersistenceMapper.class);
 			configuration.addInterceptor(new BasePlugin());
 			bizSqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 		return bizSqlSessionFactory;

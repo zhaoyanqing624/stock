@@ -1,84 +1,46 @@
 package com.stock.partner.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.zip.GZIPInputStream;
 
 public class testURL {  
-    public static void main(String[] args) {  
-        String destURLStr= "http://www.baidu.com";  
-        URL destURL = null;  
-        URLConnection urlCon = null;  
-        HttpURLConnection httpUrlCon= null;  
-        String readResFile = "C:/Users/zhoujw/Desktop/readResFile.html";  
-        BufferedWriter bw = null;  
-        try {  
-            bw = new BufferedWriter(new FileWriter(readResFile));  
-            destURL = new URL(destURLStr);  
-            urlCon = destURL.openConnection();  
-            httpUrlCon = (HttpURLConnection)urlCon;  
-            //set request property  
-            httpUrlCon.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");  
-            //可根据需要添加自定义请求头  
-            httpUrlCon.setRequestProperty("Test Header1", "test1");  
-            httpUrlCon.setRequestProperty("Test Header2", "test2");  
-            httpUrlCon.connect();  
-            BufferedReader br = new BufferedReader(new InputStreamReader(httpUrlCon.getInputStream(), "gbk"));  
-            String webpage = null;  
-            while((( webpage = br.readLine()) != null))  
-            {  
-//              System.out.println(webpage);  
-                bw.write(webpage);  
-                bw.flush();  
-            }  
-            //debug  
-            System.out.println("Self Define Headers:");  
-            System.out.println(" Test Header1: " + httpUrlCon.getRequestProperty("Test Header1"));  
-            System.out.println(" Test Header2: " + httpUrlCon.getRequestProperty("Test Header2"));  
-            System.out.println();  
-            //echo request property  
-            echoRequestHeaders(httpUrlCon);  
-            //echo response property  
-            echoResponseHeaders(httpUrlCon);  
-        } catch (MalformedURLException e) {  
-            e.printStackTrace();  
-        } catch (IOException e) {  
-            e.printStackTrace();  
-        }  
-    }  
-      
-    public static void echoRequestHeaders(HttpURLConnection httpUrlCon){  
-        System.out.println("Request Headers:");  
-        System.out.println(" " + httpUrlCon.getRequestMethod() + " / " + " HTTP/1.1");  
-        System.out.println(" Host: " + httpUrlCon.getRequestProperty("Host"));  
-        System.out.println(" Connection: " + httpUrlCon.getRequestProperty("Connection"));  
-        System.out.println(" Accept: " + httpUrlCon.getRequestProperty("Accept"));  
-        System.out.println(" User-Agent: " + httpUrlCon.getRequestProperty("User-Agent"));  
-        System.out.println(" Accept-Encoding: " + httpUrlCon.getRequestProperty("Accept-Encoding"));  
-        System.out.println(" Accept-Language: " + httpUrlCon.getRequestProperty("Accept-Language"));  
-        System.out.println(" Cookie: " + httpUrlCon.getRequestProperty("Cookie"));  
-        System.out.println(" Connection: " + httpUrlCon.getHeaderField("Connection"));//利用另一种读取HTTP头字段  
-        System.out.println();  
-    }  
-      
-    public static void echoResponseHeaders(HttpURLConnection httpUrlCon) throws IOException{  
-        System.out.println("Response Headers:");  
-        System.out.println(" " + "HTTP/1.1 " + httpUrlCon.getResponseCode() + " " + httpUrlCon.getResponseMessage());  
-        System.out.println(" status: " + httpUrlCon.getResponseCode() + " " + httpUrlCon.getResponseMessage());  
-        System.out.println(" content-encoding: " + httpUrlCon.getContentEncoding());  
-        System.out.println(" content-length : " + httpUrlCon.getContentLength());  
-        System.out.println(" content-type: " + httpUrlCon.getContentType());  
-        System.out.println(" Date: " + httpUrlCon.getDate());  
-        System.out.println(" ConnectTimeout: " + httpUrlCon.getConnectTimeout());  
-        System.out.println(" expires: " + httpUrlCon.getExpiration());  
-        System.out.println(" content-type: " + httpUrlCon.getHeaderField("content-type"));//利用另一种读取HTTP头字段  
-        System.out.println();  
-    }  
+	public static void main(String[] args) throws IOException {
+		String urlString = "https://finan";
+		URL weatherAPI = new URL(urlString);
+	    HttpURLConnection apiConnection = (HttpURLConnection) weatherAPI.openConnection();
+	    apiConnection.setRequestMethod("GET");
+	    apiConnection.setRequestProperty("Accept-Encoding", "gzip");
+	    apiConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
+	    apiConnection.connect();
+	    InputStream gzippedResponse = apiConnection.getInputStream();
+	    InputStream decompressedResponse = new GZIPInputStream(gzippedResponse);
+	    Reader reader = new InputStreamReader(decompressedResponse, "UTF-8");
+	    StringWriter writer = new StringWriter();
+	    char[] buffer = new char[10240];
+	    for(int length = 0; (length = reader.read(buffer)) > 0;){
+	        writer.write(buffer, 0, length);
+	    }
+	    writer.close();
+	    reader.close();
+	    decompressedResponse.close();
+	    gzippedResponse.close();
+	    apiConnection.disconnect();
+	    System.out.println(writer.toString());
+	}
     
 }
